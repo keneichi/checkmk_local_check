@@ -20,3 +20,6 @@ Ce check vérifie que la version de l'OS est bien la dernière disponible.
 Ce check vérifie que le dépot local soit bien synchronisé avec le déport github.  
 Aussi bien en download (github plus récent que le repertoire local) qu'en upload ((répertoire local avec des modifications non reportées sur le depot github)
 
+# check_checkmk_updates.py
+Ce check vérifie la disponibilité d'une nouvelle version de CheckMK server
+
