@@ -15,3 +15,8 @@ Trois checks sont créés :
 
 # checkos.py
 Ce check vérifie que la version de l'OS est bien la dernière disponible.
+
+# git_checks.sh
+Ce check vérifie que le dépot local soit bien synchronisé avec le déport github.  
+Aussi bien en download (github plus récent que le repertoire local) qu'en upload ((répertoire local avec des modifications non reportées sur le depot github)
+
