@@ -2,7 +2,7 @@
 set -euo pipefail
 
 WG_BIN="${WG_BIN:-wg}"
-CONF="/etc/check_mk/wireguard_peers.conf"
+CONF="/etc/check_mk/local_check_conf/wireguard_peers.conf"
 
 WARN_DEFAULT="${WARN_DEFAULT:-180}"   # 3 min
 CRIT_DEFAULT="${CRIT_DEFAULT:-600}"   # 10 min
