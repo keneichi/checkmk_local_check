@@ -43,9 +43,9 @@ Ce fichier doit être adapté avec les informations propres à l’environnement
 Script Python réalisant la comparaison entre Scanopy et Checkmk.
 
 Chemin :
-*/usr/local/lib/scanopy/scanopy_shadowit.py*
+*/usr/local/lib/scanopy_shadowit.py*
 ```
-chmod 755 /usr/local/lib/scanopy/scanopy_shadowit.py
+chmod 755 /usr/local/lib/scanopy_shadowit.py
 ```
 
 ### Wrapper Checkmk (local check)
