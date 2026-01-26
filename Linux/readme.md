@@ -23,3 +23,5 @@ Aussi bien en download (github plus récent que le repertoire local) qu'en uploa
 # check_checkmk_updates.py
 Ce check vérifie la disponibilité d'une nouvelle version de CheckMK server
 
+# nextcloud_version.sh
+Ce Check vérifie la présence de mises à jour pour Nextcloud mais aussi pour les applications utilisées sur l'instance Nextcloud
