@@ -29,12 +29,3 @@ Ce check vérifie la disponibilité d'une nouvelle version de CheckMK server
 
 ## nextcloud_version.sh
 Ce Check vérifie la présence de mises à jour pour Nextcloud mais aussi pour les applications utilisées sur l'instance Nextcloud
-
-## canopy_shadowit.py
-Ce check s'appuie sur ScanOpy pour analyser le ou les réseaux et faire un différentiel entre les hosts apparent sur les hosts monitorés sur CheckMK.  
-Il est possible d'appliquer un tag "nocheckmk" sur un host découvert par scanopy pour que CheckMK n'affiche pas d'erreur 
-Cela nécessite donc :  
-* Une instance ScanOpy (installé en docker)
-* Un token scanopy difini
-* Un compte user dédié dans CheckMK
-
