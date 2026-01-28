@@ -29,3 +29,7 @@ Ce check vérifie la disponibilité d'une nouvelle version de CheckMK server
 
 ## nextcloud_version.sh
 Ce Check vérifie la présence de mises à jour pour Nextcloud mais aussi pour les applications utilisées sur l'instance Nextcloud
+
+## pbs-datastore
+Ce check vérifie, lors de l'utilisation conjointe d'un serveurs Proxmox VE et Proxmox BS, que le datastore de backup est bien connecté sur le serveur PVE.
+Penser à ajuster la variable DATASTORE en début de fichier pour inscire le nom de votre datastore
