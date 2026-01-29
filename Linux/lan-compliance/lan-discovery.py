@@ -18,7 +18,12 @@ CHECKMK_SITE = os.getenv("CHECKMK_SITE", "mysite")
 CHECKMK_USER = os.getenv("CHECKMK_USER", "automation")
 CHECKMK_SECRET = os.getenv("CHECKMK_SECRET", "")
 
+# Nouveau: on ignore via TAG ID (plus pérenne)
+NOCHECKMK_TAG_ID = os.getenv("NOCHECKMK_TAG_ID", "").strip()
+
+# Fallback legacy: ignore via nom de tag (si NOCHECKMK_TAG_ID pas défini)
 IGNORE_SCANOPY_TAG = os.getenv("SCANOPY_IGNORE_TAG", "nocheckmk")
+
 CHECKMK_EXTRA_IP_LABEL = os.getenv("CHECKMK_EXTRA_IP_LABEL", "vpn_ip")
 
 WARN_AT = int(os.getenv("SCANOPY_WARN_AT", "1"))
@@ -69,12 +74,10 @@ def extract_scanopy_host_ips_and_tag_ids(h: dict):
 
     ips = set()
     for iface in (h.get("interfaces") or []):
-        # Scanopy: interfaces[].ip_address
         v = iface.get("ip_address")
         if v:
             ips.add(str(v))
 
-    # fallback éventuel
     for k in ("ip", "ip_address", "primary_ip"):
         v = h.get(k)
         if v:
@@ -123,11 +126,8 @@ def extract_checkmk_host_ips(h: dict):
 
 def main():
     try:
-        # Scanopy
         scanopy_hosts = scanopy_list_hosts()
-        scanopy_tags_map = scanopy_list_tags()  # id -> name
-
-        # Checkmk
+        scanopy_tags_map = scanopy_list_tags()  # id -> name (lower)
         checkmk_hosts = checkmk_list_hosts()
 
         checkmk_ips = set()
@@ -146,17 +146,22 @@ def main():
         for sh in scanopy_hosts:
             name, ips, tag_ids = extract_scanopy_host_ips_and_tag_ids(sh)
 
-            # Translate tag IDs -> names
-            tag_names = set()
-            for tid in tag_ids:
-                tname = scanopy_tags_map.get(tid, "")
-                if tname:
-                    tag_names.add(tname.lower())
-
-            if IGNORE_SCANOPY_TAG.lower() in tag_names:
+            # --- IGNORE LOGIC ---
+            # 1) si NOCHECKMK_TAG_ID est défini: ignore par ID
+            if NOCHECKMK_TAG_ID and (NOCHECKMK_TAG_ID in tag_ids):
                 continue
 
-            # match par IP (prioritaire) sinon par nom
+            # 2) sinon fallback: ignore par nom (legacy)
+            if not NOCHECKMK_TAG_ID:
+                tag_names = set()
+                for tid in tag_ids:
+                    tname = scanopy_tags_map.get(tid, "")
+                    if tname:
+                        tag_names.add(tname.lower())
+                if IGNORE_SCANOPY_TAG.lower() in tag_names:
+                    continue
+            # --- /IGNORE LOGIC ---
+
             in_checkmk = False
             if ips and (ips & checkmk_ips):
                 in_checkmk = True
