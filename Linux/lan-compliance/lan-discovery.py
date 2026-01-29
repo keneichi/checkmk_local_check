@@ -25,7 +25,7 @@ WARN_AT = int(os.getenv("SCANOPY_WARN_AT", "1"))
 CRIT_AT = int(os.getenv("SCANOPY_CRIT_AT", "5"))
 TIMEOUT = float(os.getenv("HTTP_TIMEOUT", "10"))
 
-SERVICE_NAME = "Scanopy Shadow IT"
+SERVICE_NAME = "LAN Discovery"
 
 
 def http_get(url: str, headers: dict) -> dict:
