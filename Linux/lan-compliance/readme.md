@@ -29,11 +29,11 @@ fonctionnelle).
 Fichier de configuration contenant les paramètres et secrets (tokens API).
 
 Chemin :
-*/etc/check_mk/local_check_conf/scanopy_shadowit.env*
+*/etc/check_mk/local_check_conf/lan-compliance.env*
 
 Permissions recommandées :
 ```
-chmod 600 /etc/check_mk/local_check_conf/scanopy_shadowit.env
+chmod 600 /etc/check_mk/local_check_conf/lan-compliance.env
 ```
 
 Ce fichier doit être adapté avec les informations propres à l’environnement  (URL, tokens, seuils, etc.).
@@ -43,9 +43,9 @@ Ce fichier doit être adapté avec les informations propres à l’environnement
 Script Python réalisant la comparaison entre Scanopy et Checkmk.
 
 Chemin :
-*/usr/local/lib/scanopy_shadowit.py*
+*/usr/local/lib/lan-discovery.py*
 ```
-chmod 755 /usr/local/lib/scanopy_shadowit.py
+chmod 755 /usr/local/lib/lan-discovery.py
 ```
 
 ### Wrapper Checkmk (local check)
@@ -54,9 +54,9 @@ Script appelé par l’agent Checkmk.
 Il charge les variables d’environnement puis exécute le script principal.
 
 Chemin :
-*/usr/lib/check_mk_agent/local/scanopy_shadowit*
+*/usr/lib/check_mk_agent/local/lan-discovery.sh*
 ```
-chmod +x /usr/lib/check_mk_agent/local/scanopy_shadowit
+chmod +x /usr/lib/check_mk_agent/local/lan-discovery.sh
 ```
 
 ## Fonctionnement
