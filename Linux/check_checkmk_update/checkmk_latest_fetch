@@ -1,0 +1,1 @@
+*/120 * * * * root /usr/local/bin/checkmk_latest_fetch.py
