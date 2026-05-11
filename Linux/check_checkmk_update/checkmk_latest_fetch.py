@@ -17,14 +17,9 @@ CACHE_FILE = os.path.join(CACHE_DIR, "checkmk_latest_version.txt")
 META_FILE = CACHE_FILE + ".meta"
 TIMEOUT = 15
 
-# Compatible :
-# 2.4.0p10
-# 2.4.0p10.cre
-# 2.5.0
-# 2.5.0.community
-# 2.5.1p1.community
+# On limite volontairement à Checkmk 2.x
 VER_RE = re.compile(
-    r"\b(\d+)\.(\d+)\.(\d+)(?:p(\d+))?(?:\.(?:cre|cee|cce|raw|enterprise|cloud|community))?\b",
+    r"\b(2)\.(\d+)\.(\d+)(?:p(\d+))?(?:\.(?:cre|cee|cce|raw|enterprise|cloud|community))?\b",
     re.IGNORECASE,
 )
 
@@ -41,23 +36,40 @@ def normalize_version(v: str):
     return f"{major}.{minor}.{patch}p{patchlevel}"
 
 def version_tuple(v: str):
-    nv = normalize_version(v)
-    if not nv:
-        return None
-
-    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)p(\d+)", nv)
+    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)p(\d+)", v)
     if not m:
         return None
-
     return tuple(map(int, m.groups()))
 
 def fetch_text(url: str) -> str:
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "checkmk-latest-fetch/1.1 (+local)"},
+        headers={"User-Agent": "checkmk-latest-fetch/1.2 (+local)"},
     )
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
         return r.read().decode("utf-8", "ignore")
+
+def looks_like_checkmk_context(text: str, start: int, end: int) -> bool:
+    context = text[max(0, start - 120):min(len(text), end + 120)].lower()
+
+    good_words = [
+        "checkmk",
+        "check-mk",
+        "stable release",
+        "release checkmk",
+        "checkmk stable",
+    ]
+
+    bad_words = [
+        "discourse",
+        "python",
+        "debian",
+        "ubuntu",
+        "openssl",
+        "grafana",
+    ]
+
+    return any(w in context for w in good_words) and not any(w in context for w in bad_words)
 
 def main():
     os.makedirs(CACHE_DIR, exist_ok=True)
@@ -84,20 +96,31 @@ def main():
         raw = match.group(0)
         normalized = normalize_version(raw)
 
-        if normalized and version_tuple(normalized):
-            candidates.append(normalized)
+        if not normalized:
+            continue
+
+        if not version_tuple(normalized):
+            continue
+
+        if not looks_like_checkmk_context(html, match.start(), match.end()):
+            continue
+
+        candidates.append(normalized)
+
+    candidates = sorted(set(candidates), key=version_tuple)
 
     if not candidates:
-        print("[checkmk_latest_fetch] ERR: no version found in RSS", file=sys.stderr)
+        print("[checkmk_latest_fetch] ERR: no valid Checkmk 2.x version found in RSS", file=sys.stderr)
         sys.exit(2)
 
-    latest = max(candidates, key=version_tuple)
+    latest = candidates[-1]
 
     with open(CACHE_FILE, "w") as f:
         f.write(latest + "\n")
 
     with open(META_FILE, "w") as f:
         f.write(time.strftime("%F %T") + " via RSS\n")
+        f.write("candidates=" + ",".join(candidates) + "\n")
 
     print(f"[checkmk_latest_fetch] OK: latest={latest}")
 
