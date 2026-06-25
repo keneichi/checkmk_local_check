@@ -1,1 +1,2 @@
+## This File goes into /etc/cron.d/ ##
 */5 * * * * www-data php /var/www/glpi/front/cron.php >/dev/null 2>&1
