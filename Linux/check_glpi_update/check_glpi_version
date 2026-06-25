@@ -1,0 +1,25 @@
+#!/bin/bash
+
+DB_NAME="glpi"
+
+installed_version=$(mysql -N -B "$DB_NAME" -e \
+"SELECT value FROM glpi_configs WHERE context='core' AND name='version' LIMIT 1;")
+
+found_version=$(mysql -N -B "$DB_NAME" -e \
+"SELECT value FROM glpi_configs WHERE context='core' AND name='found_new_version' LIMIT 1;")
+
+if [ -z "$installed_version" ]; then
+  echo "2 GLPI_Version - Impossible de lire la version GLPI installée en base"
+  exit 0
+fi
+
+if [ -z "$found_version" ]; then
+  echo "0 GLPI_Version - OK: GLPI $installed_version, aucune nouvelle version détectée par GLPI"
+  exit 0
+fi
+
+if [ "$installed_version" = "$found_version" ]; then
+  echo "0 GLPI_Version - OK: GLPI $installed_version est à jour"
+else
+  echo "2 GLPI_Version - CRITICAL: GLPI $installed_version installé, nouvelle version disponible: $found_version"
+fi
