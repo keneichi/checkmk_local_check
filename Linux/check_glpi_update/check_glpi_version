@@ -1,3 +1,6 @@
+##
+This file goes to /usr/lib/check_mk_agent/local/
+##
 #!/bin/bash
 
 DB_NAME="glpi"
